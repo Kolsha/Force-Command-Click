@@ -1,0 +1,48 @@
+on last_offset(the_text, char)
+	try
+		set i to 1
+		set last_occurrence to 0
+		repeat count of the_text times
+			if item i of the_text as string = char then
+				set last_occurrence to i
+			end if
+			set i to i + 1
+		end repeat
+	on error
+		return 0
+	end try
+	return last_occurrence
+end last_offset
+
+on basedir(the_path)
+	set last_occurrence to last_offset(the_path, "/")
+	if last_occurrence is equal to 0 then
+		return "."
+	end if
+	if last_occurrence is equal to 1 then
+		return "/"
+	end if
+	return items 1 thru (last_occurrence) of the_path as string
+end basedir
+
+on dirname(the_path)
+	set last_occurrence to last_offset(the_path, "/")
+	if last_occurrence is equal to 0 then
+		return "."
+	end if
+	if last_occurrence is equal to 1 then
+		return "/"
+	end if
+	if last_occurrence is equal to (count of the_path) then
+		set the_path to items 1 thru (last_occurrence - 1) of the_path as string
+		return dirname(the_path)
+	end if
+	return items 1 thru (last_occurrence - 1) of the_path as string
+end dirname
+
+on run {input, parameters}
+	
+	set thePath to dirname(POSIX path of (path to me)) & "/"
+	do shell script "nohup ." & thePath & "ForceCommandClick &>/dev/null &"
+	return input
+end run
