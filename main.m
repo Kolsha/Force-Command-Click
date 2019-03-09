@@ -8,29 +8,36 @@
 
 bool needIgnoreNextLeftMouseUp = false;
 
+
+
 CGEventRef myCGEventCallback(CGEventTapProxy proxy,
                              CGEventType type,
                              CGEventRef eventRef,
                              void *refcon)
 {
+@autoreleasepool {
+
     if(needIgnoreNextLeftMouseUp &&
        (type == kCGEventLeftMouseUp || type == kCGEventLeftMouseDown)){
-        return CGEventCreate(NULL);
+        return (NULL);
     }
     
     if ((type != RequiredEvent)){
         return eventRef;
     }
+
+
     
     NSEvent *event = [NSEvent eventWithCGEvent:eventRef];
+
     
     if(needIgnoreNextLeftMouseUp && event.stage != 0){
-        return CGEventCreate(NULL);
+        return (NULL);
     }
     
     if(needIgnoreNextLeftMouseUp){
         needIgnoreNextLeftMouseUp = false;
-        return CGEventCreate(NULL);
+        return (NULL);
     }
     
     
@@ -48,23 +55,25 @@ CGEventRef myCGEventCallback(CGEventTapProxy proxy,
     if (event.type == NSEventTypePressure && event.stage == 2){
         
         if(event.pressure > 0.000){
-            return CGEventCreate(NULL);
+            return (NULL);
         }
         
         
-        NSLog(@"Deep click");
+        //NSLog(@"Deep click");
         
         CGEventSourceRef src = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
+
+        CGPoint mouse_pos = CGEventGetLocation(eventRef);
         
         CGEventRef click_down = CGEventCreateMouseEvent(
                                                          src, kCGEventLeftMouseDown,
-                                                         CGEventGetLocation(eventRef),
+                                                         mouse_pos,
                                                          kCGMouseButtonLeft
                                                          );
         
         CGEventRef click_up = CGEventCreateMouseEvent(
                                                        src, kCGEventLeftMouseUp,
-                                                       CGEventGetLocation(eventRef),
+                                                       mouse_pos,
                                                        kCGMouseButtonLeft
                                                        );
         
@@ -76,10 +85,16 @@ CGEventRef myCGEventCallback(CGEventTapProxy proxy,
         CGEventPost(kCGHIDEventTap, click_down);
         
         needIgnoreNextLeftMouseUp = true;
+
+        CFRelease(src);
+        CFRelease(click_down);
+
+
         return click_up;
     }
     
     return eventRef;
+}
 }
 
 int main(void)

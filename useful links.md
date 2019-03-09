@@ -13,3 +13,8 @@ https://stackoverflow.com/questions/2734117/simulating-mouse-input-programmatica
 https://stackoverflow.com/questions/39146837/os-x-using-quartz-event-services-to-generate-simulate-touch-gestures-pinch-rot
 
 https://github.com/ScrimpyCat/DeskDisplay/blob/master/MainWindow.m
+
+
+https://gist.github.com/atr000/212216
+
+https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html
